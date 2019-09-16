@@ -18,8 +18,8 @@ const (
 	// DefaultCount is 1
 	DefaultCount = 1
 
-	// DefaultPayloadSize is 1472 bytes
-	DefaultPayloadSize = 1472
+	// DefaultPayloadSize is 56 bytes
+	DefaultPayloadSize = 56
 )
 
 // Opts specifies options for pinging
