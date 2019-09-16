@@ -12,6 +12,7 @@ func main() {
 	opts := &ping.Opts{}
 	flag.IntVar(&opts.Count, "c", ping.DefaultCount, "number of times to ping")
 	flag.IntVar(&opts.PayloadSize, "s", ping.DefaultPayloadSize, "number of bytes payload in each ICMP echo request")
+	porcelain := flag.Bool("porcelain", false, "print result in machine-readable format")
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
@@ -23,5 +24,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("\"%v\",%v,%v,%v,%v\n", host, stats.RTTMin, stats.RTTAvg, stats.RTTMax, stats.PLR)
+	if *porcelain {
+		fmt.Printf("\"%v\",%v,%v,%v,%v\n", host, stats.RTTMin, stats.RTTAvg, stats.RTTMax, stats.PLR)
+	} else {
+		fmt.Printf("%v    rtt min/avg/max (%vms / %vms / %vms)    packet loss rate (%v%%)\n", host, stats.RTTMin, stats.RTTAvg, stats.RTTMax, stats.PLR)
+	}
 }
