@@ -27,6 +27,6 @@ func main() {
 	if *porcelain {
 		fmt.Printf("\"%v\",%v,%v,%v,%v\n", host, stats.RTTMin, stats.RTTAvg, stats.RTTMax, stats.PLR)
 	} else {
-		fmt.Printf("%v    rtt min/avg/max (%vms / %vms / %vms)    packet loss rate (%v%%)\n", host, stats.RTTMin, stats.RTTAvg, stats.RTTMax, stats.PLR)
+		fmt.Printf("%v - %v\n", host, stats)
 	}
 }

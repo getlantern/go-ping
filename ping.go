@@ -6,6 +6,7 @@ package ping
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"os/exec"
 	"strconv"
@@ -40,6 +41,10 @@ type Stats struct {
 	RTTMax float64
 	// Packet Loss Rate (ratio, not percent)
 	PLR float64
+}
+
+func (s *Stats) String() string {
+	return fmt.Sprintf("rtt min/avg/max (%vms / %vms / %vms)    packet loss rate (%v%%)", s.RTTMin, s.RTTAvg, s.RTTMax, s.PLR)
 }
 
 // Run pings the specified host the specified number of times
