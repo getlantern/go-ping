@@ -63,11 +63,14 @@ func Run(host string, opts *Opts) (*Stats, error) {
 
 	stats := &Stats{}
 	reader := bufio.NewReader(bytes.NewReader(out))
+	foundRTT := false
+	foundPLR := false
 	for {
 		_line, _, err := reader.ReadLine()
 		if _line != nil {
 			line := string(_line)
 			if matches := rttRegex.FindStringSubmatch(line); matches != nil {
+				foundRTT = true
 				stats.RTTMin, err = strconv.ParseFloat(matches[rttMinIdx], 64)
 				if err != nil {
 					return nil, errors.New("Unable to parse RTT %v: %v", matches[rttMinIdx], err)
@@ -85,6 +88,7 @@ func Run(host string, opts *Opts) (*Stats, error) {
 					return nil, errors.New("Unable to parse RTT %v: %v", matches[rttDevIdx], err)
 				}
 			} else if matches := packetLossRegex.FindStringSubmatch(line); matches != nil {
+				foundPLR = true
 				stats.PLR, err = strconv.ParseFloat(matches[1], 64)
 				if err != nil {
 					return nil, errors.New("Unable to parse packet loss %v: %v", matches[1], err)
@@ -99,5 +103,11 @@ func Run(host string, opts *Opts) (*Stats, error) {
 		}
 	}
 
+	if !foundRTT {
+		return nil, errors.New("PING result did not include RTT information")
+	}
+	if !foundPLR {
+		return nil, errors.New("PING result did not include packet loss information")
+	}
 	return stats, nil
 }

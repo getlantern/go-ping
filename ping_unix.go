@@ -6,12 +6,12 @@ import (
 )
 
 var (
-	rttRegex        = regexp.MustCompile(`rtt min/avg/max/mdev = ([0-9\.]+)/([0-9\.]+)/([0-9\.]+)/([0-9\.]+).+`)
+	rttRegex        = regexp.MustCompile(`.+min/avg/max/.+dev = ([0-9\.]+)/([0-9\.]+)/([0-9\.]+)/([0-9\.]+).+`)
 	rttMinIdx       = 1
 	rttAvgIdx       = 2
 	rttMaxIdx       = 3
 	rttDevIdx       = 4
-	packetLossRegex = regexp.MustCompile(`.+, ([0-9]+)% packet loss.+`)
+	packetLossRegex = regexp.MustCompile(`.+, ([0-9\.]+)% packet loss.*`)
 )
 
 func args(host string, opts *Opts) []string {
