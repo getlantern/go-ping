@@ -1,4 +1,4 @@
-module github.com/getlantern/ping
+module github.com/getlantern/go-ping
 
 go 1.12
 
