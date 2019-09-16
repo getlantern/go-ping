@@ -17,6 +17,5 @@ func TestRun(t *testing.T) {
 		assert.True(t, stats.RTTMin > 0)
 		assert.True(t, stats.RTTAvg > 0)
 		assert.True(t, stats.RTTMax > 0)
-		assert.True(t, stats.RTTDev > 0)
 	}
 }

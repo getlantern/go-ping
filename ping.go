@@ -38,8 +38,6 @@ type Stats struct {
 	RTTAvg float64
 	// RTT Maximum milliseconds
 	RTTMax float64
-	// RTT Deviation milliseconds
-	RTTDev float64
 	// Packet Loss Rate (ratio, not percent)
 	PLR float64
 }
@@ -82,10 +80,6 @@ func Run(host string, opts *Opts) (*Stats, error) {
 				stats.RTTMax, err = strconv.ParseFloat(matches[rttMaxIdx], 64)
 				if err != nil {
 					return nil, errors.New("Unable to parse RTT %v: %v", matches[rttMaxIdx], err)
-				}
-				stats.RTTDev, err = strconv.ParseFloat(matches[rttDevIdx], 64)
-				if err != nil {
-					return nil, errors.New("Unable to parse RTT %v: %v", matches[rttDevIdx], err)
 				}
 			} else if matches := packetLossRegex.FindStringSubmatch(line); matches != nil {
 				foundPLR = true
