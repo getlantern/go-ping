@@ -10,7 +10,7 @@ func TestRun(t *testing.T) {
 	_, err := Run("asdbasdfasdfdasfkjhasdfkjh.com", nil)
 	assert.Error(t, err)
 
-	stats, err := Run("www.baidu.com", &Opts{
+	stats, err := Run("localhost", &Opts{
 		Count: 10,
 	})
 	if assert.NoError(t, err) {
