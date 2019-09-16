@@ -13,6 +13,14 @@ import (
 	"github.com/getlantern/errors"
 )
 
+const (
+	// DefaultCount is 1
+	DefaultCount = 1
+
+	// DefaultPayloadSize is 1472 bytes
+	DefaultPayloadSize = 1472
+)
+
 // Opts specifies options for pinging
 type Opts struct {
 	// Count is the number of times to ping (defaults to 1)
@@ -42,10 +50,10 @@ func Run(host string, opts *Opts) (*Stats, error) {
 		opts = &Opts{}
 	}
 	if opts.Count <= 0 {
-		opts.Count = 1
+		opts.Count = DefaultCount
 	}
 	if opts.PayloadSize <= 0 {
-		opts.PayloadSize = 1472
+		opts.PayloadSize = DefaultPayloadSize
 	}
 
 	out, err := exec.Command("ping", args(host, opts)...).Output()
