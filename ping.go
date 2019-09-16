@@ -56,7 +56,7 @@ func Run(host string, opts *Opts) (*Stats, error) {
 
 	out, err := exec.Command("ping", args(host, opts)...).Output()
 	if err != nil {
-		return nil, errors.New("Unable to run ping command. Output: %v: %v", string(out), err)
+		return nil, errors.New("unable to run ping command. Output: %v: %v", string(out), err)
 	}
 
 	stats := &Stats{}
@@ -71,37 +71,37 @@ func Run(host string, opts *Opts) (*Stats, error) {
 				foundRTT = true
 				stats.RTTMin, err = strconv.ParseFloat(matches[rttMinIdx], 64)
 				if err != nil {
-					return nil, errors.New("Unable to parse RTT %v: %v", matches[rttMinIdx], err)
+					return nil, errors.New("unable to parse RTT %v: %v", matches[rttMinIdx], err)
 				}
 				stats.RTTAvg, err = strconv.ParseFloat(matches[rttAvgIdx], 64)
 				if err != nil {
-					return nil, errors.New("Unable to parse RTT %v: %v", matches[rttAvgIdx], err)
+					return nil, errors.New("unable to parse RTT %v: %v", matches[rttAvgIdx], err)
 				}
 				stats.RTTMax, err = strconv.ParseFloat(matches[rttMaxIdx], 64)
 				if err != nil {
-					return nil, errors.New("Unable to parse RTT %v: %v", matches[rttMaxIdx], err)
+					return nil, errors.New("unable to parse RTT %v: %v", matches[rttMaxIdx], err)
 				}
 			} else if matches := packetLossRegex.FindStringSubmatch(line); matches != nil {
 				foundPLR = true
 				stats.PLR, err = strconv.ParseFloat(matches[1], 64)
 				if err != nil {
-					return nil, errors.New("Unable to parse packet loss %v: %v", matches[1], err)
+					return nil, errors.New("unable to parse packet loss %v: %v", matches[1], err)
 				}
 			}
 		}
 		if err != nil {
 			if err != io.EOF {
-				return nil, errors.New("Error reading output: %v", err)
+				return nil, errors.New("error reading output: %v", err)
 			}
 			break
 		}
 	}
 
 	if !foundRTT {
-		return nil, errors.New("PING result did not include RTT information")
+		return nil, errors.New("ping result did not include RTT information")
 	}
 	if !foundPLR {
-		return nil, errors.New("PING result did not include packet loss information")
+		return nil, errors.New("ping result did not include packet loss information")
 	}
 	return stats, nil
 }
