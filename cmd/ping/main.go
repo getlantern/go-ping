@@ -23,5 +23,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("\"%v\",%v,%v,%v,%v,%v\n", host, stats.RTTMin, stats.RTTAvg, stats.RTTMax, stats.RTTDev, stats.PLR)
+	fmt.Printf("\"%v\",%v,%v,%v,%v\n", host, stats.RTTMin, stats.RTTAvg, stats.RTTMax, stats.PLR)
 }
