@@ -4,14 +4,7 @@
 package ping
 
 import (
-	"bufio"
-	"bytes"
 	"fmt"
-	"io"
-	"os/exec"
-	"strconv"
-
-	"github.com/getlantern/errors"
 )
 
 const (
@@ -31,6 +24,19 @@ type Opts struct {
 	PayloadSize int
 }
 
+func (opts *Opts) withDefaults() *Opts {
+	if opts == nil {
+		opts = &Opts{}
+	}
+	if opts.Count <= 0 {
+		opts.Count = DefaultCount
+	}
+	if opts.PayloadSize <= 0 {
+		opts.PayloadSize = DefaultPayloadSize
+	}
+	return opts
+}
+
 // Stats represents the statistics of pinging a host
 type Stats struct {
 	// RTT Minimum milliseconds
@@ -45,68 +51,4 @@ type Stats struct {
 
 func (s *Stats) String() string {
 	return fmt.Sprintf("rtt min/avg/max (%vms / %vms / %vms)    packet loss rate (%v%%)", s.RTTMin, s.RTTAvg, s.RTTMax, s.PLR)
-}
-
-// Run pings the specified host the specified number of times
-func Run(host string, opts *Opts) (*Stats, error) {
-	if opts == nil {
-		opts = &Opts{}
-	}
-	if opts.Count <= 0 {
-		opts.Count = DefaultCount
-	}
-	if opts.PayloadSize <= 0 {
-		opts.PayloadSize = DefaultPayloadSize
-	}
-
-	out, err := exec.Command("ping", args(host, opts)...).Output()
-	if err != nil {
-		return nil, errors.New("unable to run ping command. Output: %v: %v", string(out), err)
-	}
-
-	stats := &Stats{}
-	reader := bufio.NewReader(bytes.NewReader(out))
-	foundRTT := false
-	foundPLR := false
-	for {
-		_line, _, err := reader.ReadLine()
-		if _line != nil {
-			line := string(_line)
-			if matches := rttRegex.FindStringSubmatch(line); matches != nil {
-				foundRTT = true
-				stats.RTTMin, err = strconv.ParseFloat(matches[rttMinIdx], 64)
-				if err != nil {
-					return nil, errors.New("unable to parse RTT %v: %v", matches[rttMinIdx], err)
-				}
-				stats.RTTAvg, err = strconv.ParseFloat(matches[rttAvgIdx], 64)
-				if err != nil {
-					return nil, errors.New("unable to parse RTT %v: %v", matches[rttAvgIdx], err)
-				}
-				stats.RTTMax, err = strconv.ParseFloat(matches[rttMaxIdx], 64)
-				if err != nil {
-					return nil, errors.New("unable to parse RTT %v: %v", matches[rttMaxIdx], err)
-				}
-			} else if matches := packetLossRegex.FindStringSubmatch(line); matches != nil {
-				foundPLR = true
-				stats.PLR, err = strconv.ParseFloat(matches[1], 64)
-				if err != nil {
-					return nil, errors.New("unable to parse packet loss %v: %v", matches[1], err)
-				}
-			}
-		}
-		if err != nil {
-			if err != io.EOF {
-				return nil, errors.New("error reading output: %v", err)
-			}
-			break
-		}
-	}
-
-	if !foundRTT {
-		return nil, errors.New("ping result did not include RTT information")
-	}
-	if !foundPLR {
-		return nil, errors.New("ping result did not include packet loss information")
-	}
-	return stats, nil
 }
