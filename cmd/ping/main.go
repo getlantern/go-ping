@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/getlantern/ping"
+	"github.com/getlantern/go-ping"
 )
 
 func main() {

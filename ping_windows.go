@@ -1,22 +1,37 @@
 package ping
 
 import (
-	"fmt"
-	"regexp"
+	"time"
+
+	"github.com/sparrc/go-ping"
 )
 
-var (
-	rttRegex        = regexp.MustCompile(`.+Minimum = ([0-9\.]+)ms, Maximum = ([0-9\.]+)ms, Average = ([0-9\.]+)ms.*`)
-	rttMinIdx       = 1
-	rttAvgIdx       = 3
-	rttMaxIdx       = 2
-	packetLossRegex = regexp.MustCompile(`.+\(([0-9\.]+)% loss\).*`)
-)
+// Run pings the specified host with the given options
+func Run(host string, opts *Opts) (*Stats, error) {
+	opts = opts.withDefaults()
 
-func args(host string, opts *Opts) []string {
-	return []string{
-		"/n", fmt.Sprintf("%d", opts.Count),
-		"/l", fmt.Sprintf("%d", opts.PayloadSize),
-		host,
+	pinger, err := ping.NewPinger(host)
+	if err != nil {
+		return nil, err
 	}
+	pinger.SetPrivileged(true)
+
+	pinger.Count = opts.Count
+	pinger.Size = opts.PayloadSize
+	// On UNIX, the ping command won't wait forever for each packet. This keeps Windows from waiting forever as well.
+	// If the RTT is higher than 10 seconds then there's worse problems anyway.
+	pinger.Timeout = 10 * time.Duration(opts.Count) * time.Second
+	pinger.Run()
+	stats := pinger.Statistics()
+
+	return &Stats{
+		RTTMin: millis(stats.MinRtt),
+		RTTAvg: millis(stats.AvgRtt),
+		RTTMax: millis(stats.MaxRtt),
+		PLR:    stats.PacketLoss,
+	}, nil
+}
+
+func millis(d time.Duration) float64 {
+	return float64(d) / 1000000
 }
