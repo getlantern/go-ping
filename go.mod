@@ -11,5 +11,5 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/sparrc/go-ping v0.0.0-20190613174326-4e5b6552494c
 	github.com/stretchr/testify v1.4.0
-	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553 // indirect
+	golang.org/x/net v0.7.0 // indirect
 )
